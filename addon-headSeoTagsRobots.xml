@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<addon addon_id="headSeoTagsRobots" title="[kiror][SEO] Crawler Control" version_string="0.1" version_id="1" url="https://github.com/adlerosn/" install_callback_class="" install_callback_method="" uninstall_callback_class="" uninstall_callback_method="">
+  <admin_navigation/>
+  <admin_permissions/>
+  <admin_style_properties/>
+  <admin_templates>
+    <template title="kiror_option_template_custom_seo_robots_tag"><![CDATA[<xen:require css="kiror_option_template_custom_seo_robots_tag.css" />
+
+<xen:controlunit label="{$preparedOption.title}" hint="{$preparedOption.hint}">
+	<xen:explain>{xen:raw $preparedOption.explain}</xen:explain>
+	<xen:html>
+		<ul>
+			<li>
+<script>
+seoRobotsTableBehaviour = {xen:helper json, $seotablebehaviour};
+seoRobotsTableTags = {xen:helper json, $seotags};
+seoRobotsTableTemplates = {xen:helper json, $seotemplates};
+<xen:include template="kiror_option_template_custom_seo_robots_tag.js" />
+</script>
+<table class="beatiful seoTableJS">
+<thead>
+<tr class="beatiful">
+	<th class="beatiful alignCenter">Templates<br />detected</th>
+	<th class="beatiful alignCenter">Robots meta tag<br />and<br />X-Robots-Tag HTTP header</th>
+</tr>
+</thead>
+<tbody>
+<xen:foreach loop="$seorobotchoices" key="$templateSeo" value="$seoRules" i="$i">
+	<tr class="beatiful" id="seoTableLine-{$i}">
+		<td class="beatiful alignCenter">
+	{$templateSeo}
+		</td>
+		<td class="beatiful">
+	<ul class="seoTableTemplate seoTableTemplate-{$templateSeo}">
+	<input
+		type="checkbox"
+		name="{$fieldPrefix}[{$preparedOption.option_id}][{$templateSeo}][__hidden]"
+		style="display: none;"
+		checked />
+<xen:foreach loop="$seoRules" key="$seoRule" value="$ruleActive">
+	<li>
+	<input
+		class="seoTableItem seoTableItem-{$templateSeo} seoTableItem-{$templateSeo}-{$seoRule}"
+		type="checkbox"
+		onchange="seoRobotsTableChange(event)"
+		name="{$fieldPrefix}[{$preparedOption.option_id}][{$templateSeo}][{$seoRule}]"
+		{xen:if '{$ruleActive}', 'checked'}>
+			{$seoRule}
+	</input>
+	</li>
+</xen:foreach>
+	</ul>
+		</td>
+	</tr>
+</xen:foreach>
+</tbody>
+</table>
+			</li>
+		</ul>
+		
+		<input type="hidden" name="{$listedFieldName}" value="{$preparedOption.option_id}" />
+		{xen:raw $editLink}
+	</xen:html>
+</xen:controlunit>
+
+<xen:controlunit label="robots.txt" hint="{$preparedOption.hint}">
+	<xen:explain>
+		{xen:if $robotstxtloc,'<span title="{$robotstxtloc}">
+			You can edit this file from server.
+			</span><br />',''}
+		Search engines will obey to this file that should be placed at the root of your domain
+			in maximum priority, ignoring any setting from the table above if disallowed.
+			<a href="https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt">
+			Read more...</a><br />
+<p class="explain" style="margin-top:5px;">Model:<br /></p>
+<div>
+<pre class="muted" style="font-size:75%;">User-agent: [the name of the robot the following rule applies to]
+Disallow: [the URL path you want to block]
+Allow: [the URL path in of a subdirectory, within a blocked parent directory, that you want to unblock]</pre>
+</div>
+<p class="explain" style="margin-top:5px;">
+Example:<br />
+</p>
+<div>
+<pre class="muted" style="font-size:75%;">User-agent: *
+Disallow: /admin.php
+Disallow: /register
+Disallow: /account
+Disallow: /login
+Disallow: /members
+Disallow: /forums
+Allow: /forums/rules
+Allow: /forums/library
+Allow: /forums/chittalk
+Allow: /forums/lightdiscussions
+Sitemap: {$xenOptions.boardUrl}/sitemap.php</pre>
+</div>
+<p class="explain" style="margin-top:5px;">
+Prepared to become the first result on search engines?
+</p>
+	</xen:explain>
+	<xen:html>
+		<ul>
+			<li>
+				<xen:if is="{$robotstxtloc}">
+				<pre>{$robotstxt}</pre>
+				<xen:else />
+				<span class="muted">File not found</span>
+				</xen:if>
+			</li>
+		</ul>
+	</xen:html>
+</xen:controlunit>]]></template>
+    <template title="kiror_option_template_custom_seo_robots_tag.css"><![CDATA[table.beatiful {
+	width: 100%;
+}
+
+table.beatiful, th.beatiful, td.beatiful {
+	border: 1px solid {xen:property primaryDarker};
+}
+
+td.leftbeatiful {
+	border-left: 1px solid {xen:property primaryDarker};
+	padding-left: 5px;
+}
+td.rightbeatiful {
+	border-right: 1px solid {xen:property primaryDarker};
+	padding-right: 5px;
+}
+td.topbeatiful {
+	border-top: 1px solid {xen:property primaryDarker};
+	padding-top: 5px;
+}
+td.bottombeatiful {
+	border-bottom: 1px solid {xen:property primaryDarker};
+	padding-bottom: 5px;
+}
+
+th.beatiful, td.beatiful {
+	padding: 2px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+tr.beatiful:nth-child(even) {
+	background-color: {xen:property primaryLightest};
+}
+
+tr.beatiful:nth-child(odd) {
+	background-color: {xen:property primaryLighterStill};
+}
+
+th.beatiful {
+	font-weight: bold;
+	background-color: {xen:property primaryMedium};
+	color: {xen:property primaryLightest};
+}
+
+.alignRight {
+	text-align: right;
+}
+.alignLeft {
+	text-align: left;
+}
+.alignCenter {
+	text-align: center;
+}
+]]></template>
+    <template title="kiror_option_template_custom_seo_robots_tag.js"><![CDATA[function lenghtable2Array(something){
+	var arr = [];
+	for(var i = 0; i < something.length; i++)
+		arr.push(something[i]);
+	return arr;
+}
+
+function seoRobotsTablePlanChanges(check,locked){
+	seoRobotsTableTags.forEach(function(e){
+		if(check[e]){
+			seoRobotsTableBehaviour[e]['selected'].forEach(function(e2){
+				check[e2]=true;
+			});
+			seoRobotsTableBehaviour[e]['deselected'].forEach(function(e2){
+				check[e2]=false;
+			});
+			seoRobotsTableBehaviour[e]['locks'].forEach(function(e2){
+				locked[e2]=true;
+			});
+		}
+	});
+};
+
+function seoRobotsTableChange(event){
+	var template = (/seoTableTemplate-([^ ]*)/).exec(event.target.parentNode.parentNode.className)[1];
+	var toVisit = {};
+	var toEval = {};
+	var toLock = {};
+	seoRobotsTableTags.forEach(function(e){
+		toVisit[e] = (document.querySelector('.seoTableItem-'+template+'-'+e));
+		toEval[e]  = (toVisit[e].checked);
+		toLock[e]  = (false);
+	});
+	seoRobotsTablePlanChanges(toEval,toLock);
+	seoRobotsTableTags.forEach(function(e){
+		toVisit[e].checked  = toEval[e];
+		toVisit[e].disabled = toLock[e];
+		//console.log(toVisit[e],toEval[e],toLock[e]);
+	});
+};
+
+function seoRobotsTableINIT(){
+	var templateNodes = [];
+	lenghtable2Array(document.querySelectorAll('.seoTableItem')).forEach(function(e){
+		if(templateNodes.indexOf(e.parentNode.parentNode)===-1)
+			templateNodes.push(e.parentNode.parentNode);
+		else
+			return;
+		seoRobotsTableChange({'target':e});
+	});
+};
+setTimeout(seoRobotsTableINIT,200);]]></template>
+  </admin_templates>
+  <admin_template_modifications/>
+  <code_events/>
+  <code_event_listeners>
+    <listener event_id="front_controller_pre_view" execute_order="10" callback_class="headSeoTagsRobots_ListenerFrontControllerPreView" callback_method="callback" active="1" hint="" description="Sets the pre view callback to be run"/>
+  </code_event_listeners>
+  <cron/>
+  <email_templates/>
+  <email_template_modifications/>
+  <optiongroups>
+    <option option_id="seoHeaderTagsByKiror" edit_format="callback" data_type="array" can_backup="1" validation_class="headSeoTagsRobots_adminOption1" validation_method="verifier_AdminCP_CustomLinksAdder">
+      <default_value>a:0:{}</default_value>
+      <edit_format_params>headSeoTagsRobots_adminOption1::render_AdminCP_CustomLinksAdder</edit_format_params>
+      <sub_options>*</sub_options>
+      <relation group_id="seo" display_order="1100"/>
+    </option>
+  </optiongroups>
+  <permissions>
+    <permission_groups/>
+    <permissions/>
+    <interface_groups/>
+  </permissions>
+  <phrases>
+    <phrase title="option_seoHeaderTagsByKiror" version_id="0" version_string="0.0"><![CDATA[Instructions to Search Engine Robots]]></phrase>
+    <phrase title="option_seoHeaderTagsByKiror_explain" version_id="0" version_string="0.0"><![CDATA[The robots tags lets you utilize a granular, page-specific approach to controlling how an individual page should be indexed and served to users in search results.<br />
+<a href="https://developers.google.com/webmasters/control-crawl-index/docs/robots_meta_tag" target="_blank" rel="nofollow">Read more...</a><br />
+Each template is automatically added when it's sent to FrontController.]]></phrase>
+  </phrases>
+  <route_prefixes/>
+  <style_properties/>
+  <templates/>
+  <public_template_modifications>
+    <modification template="PAGE_CONTAINER" modification_key="addRobotsMetaTagsPageContatiner" description="Adds Robots Meta Tags in head of Page Contatiner" execution_order="100" enabled="1" action="str_replace">
+      <find><![CDATA[</head>]]></find>
+      <replace><![CDATA[<xen:if is="{$kiror_seo_tags_count}">	<meta name="robots" content="{$kiror_seo_tags_comma}" /></xen:if>
+$0]]></replace>
+    </modification>
+  </public_template_modifications>
+  <bb_code_media_sites/>
+  <bb_codes/>
+</addon>
